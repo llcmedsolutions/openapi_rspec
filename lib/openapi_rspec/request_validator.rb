@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "dry-initializer"
-require "rack/test"
-require "uri"
+require 'dry-initializer'
+require 'rack/test'
+require 'uri'
 
 module OpenapiRspec
   class RequestValidator
@@ -10,6 +10,7 @@ module OpenapiRspec
     include Rack::Test::Methods
 
     option :path
+    option :proxy
     option :method
     option :code
     option :media_type
@@ -56,16 +57,17 @@ module OpenapiRspec
     end
 
     def request_uri(doc)
-      path.scan(/\{([^}]*)\}/).each do |param|
+      request_path = proxy.present? ? proxy : path
+      request_path.scan(/\{([^}]*)\}/).each do |param|
         key = param.first.to_sym
         if path_params && path_params[key]
-          @path = path.gsub "{#{key}}", path_params[key].to_s
+          @path = request_path.gsub "{#{key}}", path_params[key].to_s
         else
           raise URI::InvalidURIError, "No substitution data found for {#{key}}" \
-            " to test the path #{path}."
+            " to test the path #{request_path}."
         end
       end
-      "#{doc.api_base_path}#{path}?#{URI.encode_www_form(query)}"
+      "#{doc.api_base_path}#{request_path}?#{URI.encode_www_form(query)}"
     end
 
     def request_params

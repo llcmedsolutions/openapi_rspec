@@ -3,12 +3,14 @@
 module OpenapiRspec
   module Helpers
     def request_params(metadata)
+      proxy = defined?(proxy) ? proxy_uri : nil
       path = defined?(uri) ? uri : metadata[:uri]
       method = defined?(http_method) ? http_method : metadata[:method]
 
       {
         method: method,
         path: path,
+        proxy: proxy,
         params: openapi_rspec_params,
         path_params: path_params(path),
         headers: openapi_rspec_headers,
