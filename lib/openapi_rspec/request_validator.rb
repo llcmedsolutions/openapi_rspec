@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "dry-initializer"
-require "rack/test"
-require "uri"
+require 'dry-initializer'
+require 'rack/test'
+require 'uri'
 
 module OpenapiRspec
   class RequestValidator
@@ -10,6 +10,7 @@ module OpenapiRspec
     include Rack::Test::Methods
 
     option :path
+    option :proxy
     option :method
     option :code
     option :media_type
@@ -56,7 +57,7 @@ module OpenapiRspec
     end
 
     def request_uri(doc)
-      request_path = proxy.present? proxy : path
+      request_path = proxy.present? ? proxy : path
       request_path.scan(/\{([^}]*)\}/).each do |param|
         key = param.first.to_sym
         if path_params && path_params[key]
