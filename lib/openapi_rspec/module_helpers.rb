@@ -11,6 +11,10 @@ module OpenapiRspec
       end
     end
 
+    def proxy(&block)
+      let(:proxy_uri, &block)
+    end
+
     def params(&block)
       let(:openapi_rspec_params, &block)
     end

@@ -95,5 +95,13 @@ RSpec.describe "API v1" do
         validate_code(204)
       end
     end
+
+    describe "Proxy" do
+      get '/pet' do
+        proxy { '/domestic/pet/{id}' }
+        let(:id) { 23 }
+        validate_code(200)
+      end
+    end
   end
 end
